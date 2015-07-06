@@ -15,24 +15,25 @@ module RubyARES
         doc = self.parse_document xml
 
         # Basic info
-        doc.find('//dtt:Zakladni_udaje').each do |node|
+        doc.find('//are:Zaznam').each do |node|
           attrs = node.children()
 
           # Attributes of the subject
-          @status = node.find('dtt:Stav').to_a[0].content unless node.find('dtt:Stav') == 0
-          @updated_at = node.find('dtt:Datum_zmeny').to_a[0].content unless node.find('dtt:Datum_zmeny').to_a.size == 0
-          @ic = node.find('dtt:ICO').to_a[0].content
-          @dic = node.find('dtt:DIC').to_a[0].content unless node.find('dtt:DIC').to_a.size == 0
-          @name = node.find('dtt:Obchodni_firma').to_a[0].content unless node.find('dtt:Obchodni_firma').to_a.size == 0
+          #@status = node.find('dtt:Stav').to_a[0].content unless node.find('dtt:Stav') == 0
+          #@updated_at = node.find('dtt:Datum_zmeny').to_a[0].content unless node.find('dtt:Datum_zmeny').to_a.size == 0
+          @ic = node.find('are:ICO').to_a[0].content
+          #@dic = node.find('dtt:DIC').to_a[0].content unless node.find('dtt:DIC').to_a.size == 0
+          @name = node.find('are:Obchodni_firma').to_a[0].content unless node.find('are:Obchodni_firma').to_a.size == 0
         end
 
         # Corresponding addresses
         @addresses = self.find_addresses doc
-      rescue
+      rescue => ex
+        p ex
         raise ParseError, "Can't parse the given document."
       end
 
-      if doc.find('//dtt:Error').to_a.size > 0
+      if doc.find('//are:Error').to_a.size > 0
         raise ARESDatabaseError, 'ARES returned an error.'
       end
 
@@ -45,9 +46,10 @@ module RubyARES
       def self.find_addresses(doc)
         @addresses = []
 
-        doc.find('//dtt:Adresa').each do |node|
+        doc.find('//are:Adresa_ARES').each do |node|
           id = node.find('dtt:ID_adresy').to_a[0].content
-          street = node.find('dtt:Nazev_ulice').to_a[0].content unless node.find('dtt:Nazev_ulice').to_a.size == 0
+          street = node.find('dtt:Adresa_textem').to_a[0].content unless node.find('dtt:Adresa_textem').to_a.size == 0
+          # not used below
           postcode = node.find('dtt:PSC').to_a[0].content unless node.find('dtt:PSC').to_a.size == 0
           city = node.find('dtt:Nazev_obce').to_a[0].content unless node.find('dtt:Nazev_obce').to_a.size == 0
           city_part = node.find('dtt:Nazev_casti_obce').to_a[0].content unless node.find('dtt:Nazev_casti_obce').to_a.size == 0
