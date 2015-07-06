@@ -48,8 +48,7 @@ module RubyARES
 
         doc.find('//are:Adresa_ARES').each do |node|
           id = node.find('dtt:ID_adresy').to_a[0].content
-          street = node.find('dtt:Adresa_textem').to_a[0].content unless node.find('dtt:Adresa_textem').to_a.size == 0
-          # not used below
+          street = node.find('dtt:Nazev_ulice').to_a[0].content unless node.find('dtt:Nazev_ulice').to_a.size == 0
           postcode = node.find('dtt:PSC').to_a[0].content unless node.find('dtt:PSC').to_a.size == 0
           city = node.find('dtt:Nazev_obce').to_a[0].content unless node.find('dtt:Nazev_obce').to_a.size == 0
           city_part = node.find('dtt:Nazev_casti_obce').to_a[0].content unless node.find('dtt:Nazev_casti_obce').to_a.size == 0
